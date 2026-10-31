@@ -1,0 +1,9 @@
+# Block all direct browser access to this directory.
+# PHP files can still require_once these files server-side.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order Deny,Allow
+    Deny from all
+</IfModule>

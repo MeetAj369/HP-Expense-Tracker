@@ -1,0 +1,338 @@
+/* ================================================================
+   HP Personal Expense Tracker — Dashboard Styles
+   dashboard.css  |  Version 2.0
+   ================================================================ */
+
+/* ══════════════════════════════════════════════════════════
+   1. GREETING / PAGE HEADER
+   ══════════════════════════════════════════════════════════ */
+.greeting-title {
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 4px;
+    letter-spacing: -0.3px;
+}
+
+.greeting-date {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.date-range-selector .btn {
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+}
+
+/* ══════════════════════════════════════════════════════════
+   2. SUMMARY CARDS (KPI Cards)
+   ══════════════════════════════════════════════════════════ */
+.summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 22px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.summary-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.summary-card--balance::after { background: linear-gradient(90deg, var(--info), #818cf8); }
+.summary-card--income::after  { background: linear-gradient(90deg, var(--success), #34d399); }
+.summary-card--expense::after { background: linear-gradient(90deg, var(--danger), #f87171); }
+.summary-card--savings::after { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+
+.summary-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-3px);
+}
+
+.summary-card__icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.summary-card--balance .summary-card__icon-wrap { background: var(--info-light);    color: var(--info); }
+.summary-card--income  .summary-card__icon-wrap { background: var(--success-light); color: var(--success); }
+.summary-card--expense .summary-card__icon-wrap { background: var(--danger-light);  color: var(--danger); }
+.summary-card--savings .summary-card__icon-wrap { background: var(--purple-light);  color: var(--purple); }
+
+.summary-card__content { flex: 1; min-width: 0; }
+
+.summary-card__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    margin: 0 0 6px;
+}
+
+.summary-card__amount {
+    font-size: 1.625rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin: 0 0 8px;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.summary-card__trend {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.trend-up   { color: var(--success); }
+.trend-down { color: var(--danger); }
+.trend-neutral { color: var(--text-muted); }
+
+.trend-label {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Loading state for summary cards */
+.summary-card.loading .summary-card__amount {
+    background: linear-gradient(90deg, var(--surface-secondary) 25%, var(--border-light) 50%, var(--surface-secondary) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s infinite;
+    border-radius: var(--radius-sm);
+    color: transparent;
+}
+
+/* ══════════════════════════════════════════════════════════
+   3. CHART CONTAINERS
+   ══════════════════════════════════════════════════════════ */
+.chart-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.chart-wrap canvas {
+    max-width: 100%;
+}
+
+.chart-wrap--sm  { height: 160px; }
+.chart-wrap--md  { height: 220px; }
+.chart-wrap--lg  { height: 280px; }
+.chart-wrap--xl  { height: 320px; }
+
+/* Chart legend */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 12px;
+}
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+.chart-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. RECENT TRANSACTIONS LIST
+   ══════════════════════════════════════════════════════════ */
+.tx-list { list-style: none; padding: 0; margin: 0; }
+
+.tx-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-light);
+    transition: var(--transition);
+    cursor: default;
+}
+.tx-item:last-child { border-bottom: none; }
+.tx-item:hover { background: var(--surface-hover); }
+
+.tx-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9375rem;
+    flex-shrink: 0;
+}
+
+.tx-info { flex: 1; min-width: 0; }
+.tx-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+.tx-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.tx-amount {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-align: right;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.tx-date-badge {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   5. FINANCIAL HEALTH SCORE
+   ══════════════════════════════════════════════════════════ */
+.health-score-ring {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 16px;
+    position: relative;
+}
+
+.health-score-ring svg {
+    transform: rotate(-90deg);
+}
+
+.health-score-ring .score-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.health-score-number {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.health-score-label {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+}
+
+.health-score-label.excellent { color: var(--success); }
+.health-score-label.good      { color: var(--info); }
+.health-score-label.fair      { color: var(--warning); }
+.health-score-label.poor      { color: var(--danger); }
+
+/* ══════════════════════════════════════════════════════════
+   6. ADD TRANSACTION MODAL
+   ══════════════════════════════════════════════════════════ */
+.add-tx-modal .modal-dialog { max-width: 540px; }
+
+.add-tx-modal .modal-body { padding: 24px; }
+
+.form-section-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-light);
+}
+
+/* Amount input — big and prominent */
+.amount-input-wrap {
+    position: relative;
+}
+.amount-currency-label {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    pointer-events: none;
+    z-index: 2;
+}
+.amount-input-big {
+    font-size: 1.75rem !important;
+    font-weight: 800 !important;
+    padding: 16px 16px 16px 40px !important;
+    height: auto !important;
+    color: var(--text) !important;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ══════════════════════════════════════════════════════════
+   7. UPCOMING PAYMENTS (Recurring)
+   ══════════════════════════════════════════════════════════ */
+.upcoming-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-light);
+}
+.upcoming-item:last-child { border-bottom: none; }
+
+.upcoming-days-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+.upcoming-days-badge.soon    { background: var(--danger-light);  color: var(--danger); }
+.upcoming-days-badge.week    { background: var(--warning-light); color: var(--warning); }
+.upcoming-days-badge.month   { background: var(--info-light);    color: var(--info); }
