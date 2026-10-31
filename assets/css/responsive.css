@@ -1,0 +1,195 @@
+/* ================================================================
+   HP Personal Expense Tracker — Responsive Overrides
+   responsive.css  |  Version 2.0
+   ================================================================
+   Breakpoints follow Bootstrap 5:
+     xs  < 576px   (mobile portrait)
+     sm  ≥ 576px   (mobile landscape)
+     md  ≥ 768px   (tablet)
+     lg  ≥ 992px   (desktop)
+     xl  ≥ 1200px  (large desktop)
+     xxl ≥ 1400px  (wide desktop)
+   ================================================================ */
+
+/* ── Mobile-First: Sidebar becomes Offcanvas ─────────────── */
+@media (max-width: 991.98px) {
+    /* Hide the fixed sidebar on tablet & mobile */
+    .sidebar { display: none; }
+
+    /* Main wrapper takes full width */
+    .main-wrapper { margin-left: 0 !important; }
+
+    /* Show the mobile hamburger button in the navbar */
+    .mobile-menu-btn { display: flex !important; }
+
+    /* Page content padding reduced */
+    .page-content { padding: 20px 16px 40px; }
+
+    /* Page header stacks vertically */
+    .page-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    /* Greeting font size shrinks */
+    .greeting-title { font-size: 1.375rem; }
+
+    /* Summary cards: 2 per row on tablet */
+    .summary-cards-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── Mobile Portrait ─────────────────────────────────────── */
+@media (max-width: 575.98px) {
+    /* Single column for everything */
+    .page-content { padding: 16px 12px 36px; }
+
+    /* Summary cards: 1 per row on mobile */
+    .summary-card { padding: 18px; }
+    .summary-card__amount { font-size: 1.375rem; }
+
+    /* Auth pages: full width single column */
+    .auth-panel-left  { display: none; }
+    .auth-panel-right { padding: 28px 20px; }
+
+    /* Table → scrollable horizontal on mobile */
+    .table-responsive-mobile {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Top navbar actions shrink */
+    .top-navbar { padding: 0 14px; }
+    .top-navbar .page-title { font-size: 0.9375rem; }
+
+    /* Pagination on mobile: compact */
+    .pagination .page-item .page-link {
+        padding: 6px 10px;
+        font-size: 0.8125rem;
+    }
+
+    /* Toast full width on mobile */
+    #toast-container {
+        left: 12px;
+        right: 12px;
+        bottom: 16px;
+    }
+    .hp-toast {
+        min-width: unset;
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* ── Tablet (768px – 991px) ──────────────────────────────── */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .auth-panel-left { width: 40%; padding: 32px; }
+    .auth-tagline h2 { font-size: 1.625rem; }
+    .auth-features { display: none; } /* Save space on tablet */
+}
+
+/* ── Desktop: sidebar visible ────────────────────────────── */
+@media (min-width: 992px) {
+    .mobile-menu-btn { display: none !important; }
+
+    /* Sidebar collapse button visible */
+    .sidebar-toggle { display: flex !important; }
+}
+
+/* ── Offcanvas Sidebar for Mobile (Bootstrap Offcanvas) ──── */
+.offcanvas-sidebar {
+    background: var(--sidebar-bg) !important;
+    width: var(--sidebar-width) !important;
+    border-right: 1px solid var(--sidebar-border) !important;
+}
+
+.offcanvas-sidebar .sidebar-brand,
+.offcanvas-sidebar .sidebar-nav,
+.offcanvas-sidebar .sidebar-user {
+    /* Re-use the same sidebar styles */
+    display: flex;
+}
+
+.offcanvas-sidebar .sidebar-nav { flex-direction: column; }
+
+/* Offcanvas close button colour inversion for dark background */
+.offcanvas-sidebar .btn-close {
+    filter: invert(1);
+    opacity: 0.6;
+}
+.offcanvas-sidebar .btn-close:hover { opacity: 1; }
+
+/* Offcanvas header styling */
+.offcanvas-sidebar .offcanvas-header {
+    padding: 0;
+    border-bottom: none;
+}
+
+/* ── Large Screen Optimisations ──────────────────────────── */
+@media (min-width: 1400px) {
+    .page-content { padding: 32px 36px 64px; }
+    .summary-card__amount { font-size: 1.75rem; }
+}
+
+/* ── Print Styles ────────────────────────────────────────── */
+@media print {
+    .sidebar,
+    .top-navbar,
+    .page-header-actions,
+    .btn,
+    #toast-container,
+    .mobile-menu-btn {
+        display: none !important;
+    }
+
+    .main-wrapper { margin-left: 0 !important; }
+
+    .page-content {
+        padding: 0 !important;
+    }
+
+    body {
+        background: white !important;
+        color: #000 !important;
+        font-size: 13px;
+    }
+
+    .hp-card, .summary-card {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+
+    /* Print-friendly table */
+    .hp-table thead th {
+        background: #f5f5f5 !important;
+        color: #333 !important;
+    }
+
+    .hp-table tbody tr:hover { background: none !important; }
+
+    /* Force black text for amounts in print */
+    .amount-income,
+    .amount-expense,
+    .amount-transfer { color: #000 !important; }
+}
+
+/* ── Utility: No overflow on body ────────────────────────── */
+/* Prevents the horizontal scroll that Bootstrap can sometimes introduce */
+html, body { overflow-x: hidden; }
+
+/* ── Filter toolbar collapse (mobile) ────────────────────── */
+@media (max-width: 767.98px) {
+    .filter-toolbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .filter-toolbar .filter-group {
+        width: 100%;
+    }
+
+    .filter-toolbar .filter-group .form-control,
+    .filter-toolbar .filter-group .form-select {
+        width: 100%;
+    }
+}

@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HP Expense Tracker — Financial Intelligence & Budgeting Platform</title>
+  
+  <!-- Meta tags for social preview & SEO -->
+  <meta name="description" content="HP Personal Expense Tracker — Modern financial intelligence dashboard, expense categorization, budget threshold alerts, and ledger analytics engineered by Meet Chauhan.">
+  <meta name="author" content="Meet Chauhan">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%3E<text y=%2226%22 font-size=%2224%22>💰</text></svg>">
+
+  <!-- Bootstrap 5.3.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #4f46e5;
+      --primary-hover: #4338ca;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --info-color: #06b6d4;
+      --card-radius: 16px;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    [data-bs-theme="dark"] {
+      --body-bg: #0b0f19;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --glass-specular: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      --text-muted-custom: #9ca3af;
+      --nav-bg: rgba(15, 23, 42, 0.85);
+    }
+
+    [data-bs-theme="light"] {
+      --body-bg: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-border: rgba(0, 0, 0, 0.08);
+      --glass-specular: inset 0 1px 2px rgba(255, 255, 255, 0.9);
+      --text-muted-custom: #64748b;
+      --nav-bg: rgba(255, 255, 255, 0.9);
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--body-bg);
+      min-height: 100vh;
+      color: var(--bs-body-color);
+      overflow-x: hidden;
+      transition: background-color 0.3s ease;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--card-radius);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05), var(--glass-specular);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .glass-card:hover {
+      box-shadow: 0 14px 30px -4px rgba(0, 0, 0, 0.15), var(--glass-specular);
+    }
+
+    .kpi-card {
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--kpi-color, #4f46e5), transparent);
+    }
+
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .kpi-val {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.25rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .navbar-glass {
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 1020;
+    }
+
+    .badge-pill {
+      font-size: 0.75rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 50rem;
+      font-weight: 600;
+    }
+
+    .category-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      margin-right: 0.75rem;
+    }
+
+    .amount-expense {
+      color: var(--danger-color);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    .amount-income {
+      color: var(--success-color);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    .progress {
+      height: 8px;
+      border-radius: 6px;
+      background: rgba(125, 125, 125, 0.15);
+    }
+
+    .sub-item {
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      background: rgba(125, 125, 125, 0.05);
+      border: 1px solid var(--card-border);
+      transition: background 0.2s ease;
+    }
+    .sub-item:hover {
+      background: rgba(125, 125, 125, 0.1);
+    }
+
+    .table > :not(caption) > * > * {
+      padding: 1rem 0.85rem;
+      vertical-align: middle;
+      border-bottom-color: var(--card-border);
+    }
+
+    .btn-custom-primary {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      color: white;
+      border: none;
+      font-weight: 600;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      transition: all 0.2s ease;
+    }
+    .btn-custom-primary:hover {
+      background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    /* Print styles */
+    @media print {
+      .navbar-glass, .page-header-actions, .filter-row, #addTxnBtn, .btn-action, .theme-toggle, .github-btn {
+        display: none !important;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      .glass-card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-glass py-3">
+    <div class="container-fluid px-lg-5">
+      <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="#">
+        <div class="d-inline-flex p-2 rounded-3 text-white" style="background: linear-gradient(135deg, #4f46e5, #06b6d4);">
+          <i class="bi bi-wallet2 fs-5"></i>
+        </div>
+        <div>
+          <span class="fs-5 tracking-tight">HP <span style="color: #6366f1;">ExpenseTracker</span></span>
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-2 fs-xs">Live v2.4</span>
+        </div>
+      </a>
+
+      <!-- Quick Actions / Meta -->
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <a href="https://github.com/MeetAj369/HP-Expense-Tracker" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary d-none d-md-flex align-items-center gap-1 github-btn">
+          <i class="bi bi-github"></i>
+          <span>GitHub Repo</span>
+        </a>
+        <a href="https://meetaj369.github.io/Meet-Portfolio/" class="btn btn-sm btn-outline-primary d-none d-sm-flex align-items-center gap-1">
+          <i class="bi bi-person-badge"></i>
+          <span>Meet's Portfolio</span>
+        </a>
+        <button id="themeToggleBtn" class="btn btn-sm btn-outline-secondary theme-toggle" title="Toggle Light/Dark Theme">
+          <i class="bi bi-moon-stars" id="themeIcon"></i>
+        </button>
+        <button class="btn btn-sm btn-custom-primary d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#addTransactionModal" id="addTxnBtn">
+          <i class="bi bi-plus-circle"></i>
+          <span class="d-none d-sm-inline">Add Transaction</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container-fluid px-lg-5 py-4">
+
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+      <div>
+        <h2 class="fw-bold mb-1">Financial Intelligence &amp; Ledger Overview</h2>
+        <p class="text-secondary mb-0">Live interactive dashboard tracking cashflows, budget health, subscriptions, and savings goals.</p>
+      </div>
+
+      <div class="page-header-actions d-flex flex-wrap align-items-center gap-2">
+        <!-- Account Filter -->
+        <select class="form-select form-select-sm" id="accountFilter" style="width: auto;">
+          <option value="all">All Accounts (Consolidated)</option>
+          <option value="HDFC Bank">HDFC Salary A/c</option>
+          <option value="ICICI Savings">ICICI Savings A/c</option>
+          <option value="UPI / Wallet">UPI / Digital Wallet</option>
+          <option value="Cash">Cash in Hand</option>
+        </select>
+
+        <!-- Date Range Filter -->
+        <select class="form-select form-select-sm" id="dateFilter" style="width: auto;">
+          <option value="this_month">This Month (October 2026)</option>
+          <option value="last_month">Last Month</option>
+          <option value="last_3_months">Last 3 Months</option>
+          <option value="this_year">Year to Date (2026)</option>
+        </select>
+
+        <!-- Export CSV / Print -->
+        <button class="btn btn-sm btn-outline-secondary" onclick="exportToCSV()" title="Export Filtered Transactions to CSV">
+          <i class="bi bi-file-earmark-spreadsheet me-1"></i> CSV
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="window.print()" title="Print Financial Summary">
+          <i class="bi bi-printer me-1"></i> Print
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 Key Financial KPI Cards -->
+    <div class="row g-3 mb-4">
+      <!-- Total Balance -->
+      <div class="col-sm-6 col-xl-3">
+        <div class="glass-card kpi-card" style="--kpi-color: #4f46e5;">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <span class="text-secondary fw-semibold small text-uppercase">Net Balance</span>
+              <div class="kpi-val text-primary" id="kpiBalance">₹1,48,250</div>
+            </div>
+            <div class="kpi-icon bg-primary-subtle text-primary">
+              <i class="bi bi-wallet2"></i>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-1 small text-success">
+            <i class="bi bi-arrow-up-right"></i>
+            <span class="fw-semibold">+14.2%</span>
+            <span class="text-secondary ms-1">vs. previous month</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Income -->
+      <div class="col-sm-6 col-xl-3">
+        <div class="glass-card kpi-card" style="--kpi-color: #10b981;">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <span class="text-secondary fw-semibold small text-uppercase">Total Income</span>
+              <div class="kpi-val text-success" id="kpiIncome">₹85,000</div>
+            </div>
+            <div class="kpi-icon bg-success-subtle text-success">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-1 small text-secondary">
+            <span class="badge bg-success-subtle text-success">Salary &amp; Consulting</span>
+            <span class="ms-1">2 inflow transactions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Expenses -->
+      <div class="col-sm-6 col-xl-3">
+        <div class="glass-card kpi-card" style="--kpi-color: #ef4444;">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <span class="text-secondary fw-semibold small text-uppercase">Total Spent</span>
+              <div class="kpi-val text-danger" id="kpiExpense">₹32,450</div>
+            </div>
+            <div class="kpi-icon bg-danger-subtle text-danger">
+              <i class="bi bi-credit-card"></i>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-1 small text-success">
+            <i class="bi bi-shield-check"></i>
+            <span>₹7,550 under monthly limit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Net Savings Rate -->
+      <div class="col-sm-6 col-xl-3">
+        <div class="glass-card kpi-card" style="--kpi-color: #06b6d4;">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+              <span class="text-secondary fw-semibold small text-uppercase">Savings Rate</span>
+              <div class="kpi-val text-info" id="kpiSavingsRate">61.8%</div>
+            </div>
+            <div class="kpi-icon bg-info-subtle text-info">
+              <i class="bi bi-piggy-bank"></i>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-1 small text-secondary">
+            <span class="badge bg-info-subtle text-info">+₹52,550 saved</span>
+            <span class="ms-1">50% target exceeded</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row: Monthly Cashflow & Category Spending Breakdown -->
+    <div class="row g-4 mb-4">
+      <!-- 6-Month Cashflow Trend -->
+      <div class="col-lg-8">
+        <div class="glass-card p-4 h-100">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+              <h5 class="fw-bold mb-1">6-Month Cashflow &amp; Trend Analytics</h5>
+              <p class="text-secondary small mb-0">Monthly comparison of Total Inflows vs Outflows vs Net Surplus</p>
+            </div>
+            <span class="badge bg-secondary-subtle text-secondary px-3 py-2">H2 2026</span>
+          </div>
+          <div style="position: relative; height: 320px;">
+            <canvas id="cashflowChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Breakdown Donut -->
+      <div class="col-lg-4">
+        <div class="glass-card p-4 h-100 d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h5 class="fw-bold mb-1">Spending by Category</h5>
+              <p class="text-secondary small mb-0">Category distribution for this period</p>
+            </div>
+          </div>
+          <div style="position: relative; height: 240px; margin: auto 0;">
+            <canvas id="categoryDonutChart"></canvas>
+          </div>
+          <div class="mt-3 pt-3 border-top border-secondary-subtle" id="categoryLegendList">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Row: Budget Health Progress & Subscriptions + Savings Goals -->
+    <div class="row g-4 mb-4">
+      <!-- Budget Limits & Progress Bars -->
+      <div class="col-lg-6">
+        <div class="glass-card p-4 h-100">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <h5 class="fw-bold mb-1">Budget Health &amp; Category Thresholds</h5>
+              <p class="text-secondary small mb-0">Real-time consumption against configured monthly ceilings</p>
+            </div>
+            <span class="badge bg-primary-subtle text-primary">Monthly Limits</span>
+          </div>
+
+          <div class="d-flex flex-column gap-3 mt-3">
+            <!-- Food & Dining -->
+            <div>
+              <div class="d-flex justify-content-between align-items-center small mb-1">
+                <span class="fw-semibold"><i class="bi bi-cup-hot text-warning me-1"></i> Food &amp; Dining</span>
+                <span><strong>₹9,200</strong> <span class="text-secondary">/ ₹12,000 (76.7%)</span></span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar bg-warning" role="progressbar" style="width: 76.7%;"></div>
+              </div>
+            </div>
+
+            <!-- Housing & Utilities -->
+            <div>
+              <div class="d-flex justify-content-between align-items-center small mb-1">
+                <span class="fw-semibold"><i class="bi bi-house-door text-primary me-1"></i> Rent &amp; Utilities</span>
+                <span><strong>₹11,500</strong> <span class="text-secondary">/ ₹12,000 (95.8%)</span></span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 95.8%;"></div>
+              </div>
+            </div>
+
+            <!-- Transportation -->
+            <div>
+              <div class="d-flex justify-content-between align-items-center small mb-1">
+                <span class="fw-semibold"><i class="bi bi-car-front text-info me-1"></i> Transport &amp; Fuel</span>
+                <span><strong>₹3,850</strong> <span class="text-secondary">/ ₹6,000 (64.2%)</span></span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar bg-info" role="progressbar" style="width: 64.2%;"></div>
+              </div>
+            </div>
+
+            <!-- Gadgets & Software -->
+            <div>
+              <div class="d-flex justify-content-between align-items-center small mb-1">
+                <span class="fw-semibold"><i class="bi bi-laptop text-success me-1"></i> Gadgets &amp; Tools</span>
+                <span><strong>₹4,900</strong> <span class="text-secondary">/ ₹8,000 (61.3%)</span></span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 61.3%;"></div>
+              </div>
+            </div>
+
+            <!-- Leisure & Entertainment -->
+            <div>
+              <div class="d-flex justify-content-between align-items-center small mb-1">
+                <span class="fw-semibold"><i class="bi bi-film text-secondary me-1"></i> Entertainment</span>
+                <span><strong>₹3,000</strong> <span class="text-secondary">/ ₹5,000 (60.0%)</span></span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar bg-secondary" role="progressbar" style="width: 60%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subscriptions & Savings Goals -->
+      <div class="col-lg-6">
+        <div class="glass-card p-4 h-100">
+          <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active py-1 px-3 fw-semibold small" id="pills-subs-tab" data-bs-toggle="pill" data-bs-target="#pills-subs" type="button" role="tab">
+                <i class="bi bi-repeat me-1"></i> Recurring Subscriptions
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link py-1 px-3 fw-semibold small" id="pills-goals-tab" data-bs-toggle="pill" data-bs-target="#pills-goals" type="button" role="tab">
+                <i class="bi bi-bullseye me-1"></i> Savings Goals
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="pills-tabContent">
+            <!-- Tab 1: Subscriptions -->
+            <div class="tab-pane fade show active" id="pills-subs" role="tabpanel">
+              <div class="d-flex flex-column gap-2">
+                <div class="sub-item d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded-3 bg-danger-subtle text-danger"><i class="bi bi-play-btn fs-5"></i></div>
+                    <div>
+                      <h6 class="mb-0 fw-semibold">Netflix 4K Premium</h6>
+                      <small class="text-secondary">Renews 14th every month · Card</small>
+                    </div>
+                  </div>
+                  <span class="fw-bold font-monospace">₹649 / mo</span>
+                </div>
+
+                <div class="sub-item d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded-3 bg-success-subtle text-success"><i class="bi bi-spotify fs-5"></i></div>
+                    <div>
+                      <h6 class="mb-0 fw-semibold">Spotify Family</h6>
+                      <small class="text-secondary">Renews 22nd every month · UPI</small>
+                    </div>
+                  </div>
+                  <span class="fw-bold font-monospace">₹179 / mo</span>
+                </div>
+
+                <div class="sub-item d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="p-2 rounded-3 bg-info-subtle text-info"><i class="bi bi-cloud-check fs-5"></i></div>
+                    <div>
+                      <h6 class="mb-0 fw-semibold">GitHub Copilot &amp; Cloud VPS</h6>
+                      <small class="text-secondary">Renews 05th every month · HDFC</small>
+                    </div>
+                  </div>
+                  <span class="fw-bold font-monospace">₹1,850 / mo</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2: Savings Goals -->
+            <div class="tab-pane fade" id="pills-goals" role="tabpanel">
+              <div class="d-flex flex-column gap-3">
+                <div class="sub-item">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-semibold">🛡️ 6-Month Emergency Cushion</span>
+                    <span class="fw-bold font-monospace text-success">₹82,000 / ₹1,00,000 (82%)</span>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar bg-success" style="width: 82%;"></div>
+                  </div>
+                </div>
+
+                <div class="sub-item">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-semibold">💻 M3 Pro Developer Workstation</span>
+                    <span class="fw-bold font-monospace text-primary">₹65,000 / ₹1,40,000 (46.4%)</span>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar bg-primary" style="width: 46.4%;"></div>
+                  </div>
+                </div>
+
+                <div class="sub-item">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-semibold">✈️ Tech Conference / Hackathon Travel</span>
+                    <span class="fw-bold font-monospace text-warning">₹18,000 / ₹25,000 (72%)</span>
+                  </div>
+                  <div class="progress">
+                    <div class="progress-bar bg-warning" style="width: 72%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Transaction Ledger Table -->
+    <div class="glass-card p-4 mb-4">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <h5 class="fw-bold mb-1">Transaction Ledger &amp; Journal</h5>
+          <p class="text-secondary small mb-0">Detailed historical records of all account transactions with category tagging</p>
+        </div>
+
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <!-- Live search input -->
+          <div class="input-group input-group-sm" style="max-width: 240px;">
+            <span class="input-group-text bg-transparent border-secondary-subtle"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchTxn" placeholder="Search merchant / note..." onkeyup="filterLedger()">
+          </div>
+
+          <!-- Type filter -->
+          <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-secondary active" onclick="setTxnTypeFilter('all', this)">All</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="setTxnTypeFilter('expense', this)">Expenses</button>
+            <button type="button" class="btn btn-outline-secondary" onclick="setTxnTypeFilter('income', this)">Incomes</button>
+          </div>
+
+          <!-- Reset data -->
+          <button class="btn btn-sm btn-outline-danger" onclick="resetToDemoData()" title="Reset to Initial Sample Data">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset Demo
+          </button>
+        </div>
+      </div>
+
+      <!-- Ledger Table -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="ledgerTable">
+          <thead>
+            <tr class="text-secondary small text-uppercase">
+              <th>Transaction</th>
+              <th>Category</th>
+              <th>Account</th>
+              <th>Date</th>
+              <th>Payment Method</th>
+              <th class="text-end">Amount</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="ledgerBody">
+            <!-- Populated dynamically via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer info -->
+    <footer class="text-center py-4 text-secondary small border-top border-secondary-subtle">
+      <p class="mb-1">HP Personal Expense Tracker &amp; Financial Analytics Platform · Engineered with ❤️ by <strong>Meet Chauhan</strong></p>
+      <p class="mb-0">Full-Stack PHP, PDO, MySQL 11-table schema, Chart.js &amp; Bootstrap 5 · Available for exploration</p>
+    </footer>
+
+  </div>
+
+  <!-- Modal: Add New Transaction -->
+  <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-card border-0 p-2">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold" id="addTransactionModalLabel">
+            <i class="bi bi-plus-circle-fill text-primary me-2"></i>Add New Transaction
+          </h5>
+          <button type="button" class="btn-close" data-bs-theme="dark" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="newTxnForm" onsubmit="handleCreateTransaction(event)">
+          <div class="modal-body py-3">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold">Transaction Type</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="txnType" id="typeExpense" value="expense" checked>
+                <label class="btn btn-outline-danger btn-sm" for="typeExpense"><i class="bi bi-dash-circle me-1"></i>Expense</label>
+                <input type="radio" class="btn-check" name="txnType" id="typeIncome" value="income">
+                <label class="btn btn-outline-success btn-sm" for="typeIncome"><i class="bi bi-plus-circle me-1"></i>Income</label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="txnTitle" class="form-label small fw-semibold">Description / Merchant</label>
+              <input type="text" class="form-control" id="txnTitle" placeholder="e.g., Grocery Mart, Swiggy, Freelance Fee" required>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label for="txnAmount" class="form-label small fw-semibold">Amount (₹)</label>
+                <input type="number" class="form-control font-monospace" id="txnAmount" placeholder="0.00" min="1" step="0.5" required>
+              </div>
+              <div class="col-6">
+                <label for="txnCategory" class="form-label small fw-semibold">Category</label>
+                <select class="form-select" id="txnCategory" required>
+                  <option value="Food & Dining">Food &amp; Dining</option>
+                  <option value="Rent & Housing">Rent &amp; Housing</option>
+                  <option value="Transport & Fuel">Transport &amp; Fuel</option>
+                  <option value="Tech & Tools">Tech &amp; Tools</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Salary & Earnings">Salary &amp; Earnings</option>
+                  <option value="Investments">Investments</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label for="txnAccount" class="form-label small fw-semibold">Account</label>
+                <select class="form-select" id="txnAccount" required>
+                  <option value="HDFC Bank">HDFC Salary A/c</option>
+                  <option value="ICICI Savings">ICICI Savings A/c</option>
+                  <option value="UPI / Wallet">UPI / Digital Wallet</option>
+                  <option value="Cash">Cash in Hand</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="txnMethod" class="form-label small fw-semibold">Payment Method</label>
+                <select class="form-select" id="txnMethod" required>
+                  <option value="UPI QR">UPI / QR Code</option>
+                  <option value="Debit Card">Debit Card</option>
+                  <option value="Credit Card">Credit Card</option>
+                  <option value="Net Banking">Net Banking</option>
+                  <option value="Cash">Cash</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="txnDate" class="form-label small fw-semibold">Date</label>
+              <input type="date" class="form-control" id="txnDate" required>
+            </div>
+          </div>
+
+          <div class="modal-footer border-0 pt-0">
+            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-custom-primary">Record Transaction</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
+    <div id="actionToast" class="toast align-items-center text-white bg-dark border-0 glass-card" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2">
+          <i class="bi bi-check-circle-fill text-success fs-5"></i>
+          <span id="toastMessage">Action completed successfully.</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Application Logic & State Engine -->
+  <script>
+    // Initial Verified Sample Data
+    const DEFAULT_TRANSACTIONS = [
+      { id: 1, title: 'Monthly Salary Credit', amount: 75000, type: 'income', category: 'Salary & Earnings', account: 'HDFC Bank', method: 'Net Banking', date: '2026-10-01' },
+      { id: 2, title: 'Freelance API Architecture Client', amount: 10000, type: 'income', category: 'Salary & Earnings', account: 'ICICI Savings', method: 'UPI QR', date: '2026-10-15' },
+      { id: 3, title: 'Apartment Monthly Rent', amount: 9500, type: 'expense', category: 'Rent & Housing', account: 'HDFC Bank', method: 'Net Banking', date: '2026-10-02' },
+      { id: 4, title: 'Fiber Broadband & Electricity', amount: 2000, type: 'expense', category: 'Rent & Housing', account: 'HDFC Bank', method: 'Debit Card', date: '2026-10-05' },
+      { id: 5, title: 'Supermarket Groceries & Provisions', amount: 5400, type: 'expense', category: 'Food & Dining', account: 'UPI / Wallet', method: 'UPI QR', date: '2026-10-08' },
+      { id: 6, title: 'Fine Dining & Cafe Meets', amount: 3800, type: 'expense', category: 'Food & Dining', account: 'UPI / Wallet', method: 'UPI QR', date: '2026-10-18' },
+      { id: 7, title: 'Petrol Fuel Refill (HP Station)', amount: 2600, type: 'expense', category: 'Transport & Fuel', account: 'UPI / Wallet', method: 'UPI QR', date: '2026-10-12' },
+      { id: 8, title: 'Metro & Cab Rides', amount: 1250, type: 'expense', category: 'Transport & Fuel', account: 'UPI / Wallet', method: 'UPI QR', date: '2026-10-22' },
+      { id: 9, title: 'GitHub Copilot & DigitalOcean Hosting', amount: 1850, type: 'expense', category: 'Tech & Tools', account: 'HDFC Bank', method: 'Debit Card', date: '2026-10-05' },
+      { id: 10, title: 'Mechanical Keyboard Keycaps', amount: 3050, type: 'expense', category: 'Tech & Tools', account: 'ICICI Savings', method: 'Credit Card', date: '2026-10-14' },
+      { id: 11, title: 'IMAX Movie Weekend Tickets', amount: 1600, type: 'expense', category: 'Entertainment', account: 'UPI / Wallet', method: 'UPI QR', date: '2026-10-25' },
+      { id: 12, title: 'Netflix & Spotify Family', amount: 1400, type: 'expense', category: 'Entertainment', account: 'HDFC Bank', method: 'Debit Card', date: '2026-10-10' }
+    ];
+
+    const CATEGORY_COLORS = {
+      'Food & Dining': '#f59e0b',
+      'Rent & Housing': '#4f46e5',
+      'Transport & Fuel': '#06b6d4',
+      'Tech & Tools': '#10b981',
+      'Entertainment': '#ec4899',
+      'Salary & Earnings': '#22c55e',
+      'Healthcare': '#ef4444',
+      'Investments': '#8b5cf6',
+      'Other': '#64748b'
+    };
+
+    const CATEGORY_ICONS = {
+      'Food & Dining': 'bi-cup-hot',
+      'Rent & Housing': 'bi-house-door',
+      'Transport & Fuel': 'bi-car-front',
+      'Tech & Tools': 'bi-laptop',
+      'Entertainment': 'bi-film',
+      'Salary & Earnings': 'bi-cash-coin',
+      'Healthcare': 'bi-heart-pulse',
+      'Investments': 'bi-piggy-bank',
+      'Other': 'bi-tags'
+    };
+
+    let transactions = [];
+    let activeTypeFilter = 'all';
+    let cashflowChartInstance = null;
+    let donutChartInstance = null;
+
+    // Initialize State
+    function init() {
+      const stored = localStorage.getItem('hp_expense_tracker_txns');
+      if (stored) {
+        try {
+          transactions = JSON.parse(stored);
+        } catch (e) {
+          transactions = [...DEFAULT_TRANSACTIONS];
+        }
+      } else {
+        transactions = [...DEFAULT_TRANSACTIONS];
+        saveTransactions();
+      }
+
+      document.getElementById('txnDate').value = new Date().toISOString().split('T')[0];
+      initTheme();
+      renderAll();
+    }
+
+    function saveTransactions() {
+      localStorage.setItem('hp_expense_tracker_txns', JSON.stringify(transactions));
+    }
+
+    function renderAll() {
+      renderKPIs();
+      renderCharts();
+      renderLedger();
+    }
+
+    // Calculate KPIs
+    function renderKPIs() {
+      const selectedAccount = document.getElementById('accountFilter').value;
+      const filtered = transactions.filter(t => selectedAccount === 'all' || t.account === selectedAccount);
+
+      let totalIncome = 0;
+      let totalExpense = 0;
+
+      filtered.forEach(t => {
+        if (t.type === 'income') totalIncome += Number(t.amount);
+        if (t.type === 'expense') totalExpense += Number(t.amount);
+      });
+
+      const netBalance = 95700 + totalIncome - totalExpense; // 95,700 base opening bank reserve
+      const netSavings = totalIncome - totalExpense;
+      const savingsRate = totalIncome > 0 ? ((netSavings / totalIncome) * 100).toFixed(1) : 0;
+
+      document.getElementById('kpiBalance').textContent = '₹' + netBalance.toLocaleString('en-IN');
+      document.getElementById('kpiIncome').textContent = '₹' + totalIncome.toLocaleString('en-IN');
+      document.getElementById('kpiExpense').textContent = '₹' + totalExpense.toLocaleString('en-IN');
+      document.getElementById('kpiSavingsRate').textContent = savingsRate + '%';
+    }
+
+    // Render Ledger Table
+    function renderLedger() {
+      const tbody = document.getElementById('ledgerBody');
+      const searchQuery = (document.getElementById('searchTxn').value || '').toLowerCase();
+      const selectedAccount = document.getElementById('accountFilter').value;
+
+      const filtered = transactions.filter(t => {
+        const matchesSearch = t.title.toLowerCase().includes(searchQuery) || t.category.toLowerCase().includes(searchQuery);
+        const matchesType = activeTypeFilter === 'all' || t.type === activeTypeFilter;
+        const matchesAccount = selectedAccount === 'all' || t.account === selectedAccount;
+        return matchesSearch && matchesType && matchesAccount;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-secondary">No transactions found matching the selected criteria.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(t => {
+        const icon = CATEGORY_ICONS[t.category] || 'bi-tag';
+        const color = CATEGORY_COLORS[t.category] || '#64748b';
+        const isExp = t.type === 'expense';
+        const amountDisplay = (isExp ? '- ' : '+ ') + '₹' + Number(t.amount).toLocaleString('en-IN');
+        const amountClass = isExp ? 'amount-expense' : 'amount-income';
+
+        return `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="category-icon text-white" style="background-color: ${color};">
+                  <i class="bi ${icon}"></i>
+                </div>
+                <div>
+                  <div class="fw-semibold">${escapeHtml(t.title)}</div>
+                  <small class="text-secondary d-md-none font-monospace">${t.date}</small>
+                </div>
+              </div>
+            </td>
+            <td><span class="badge bg-secondary-subtle text-secondary badge-pill">${escapeHtml(t.category)}</span></td>
+            <td><small class="text-secondary">${escapeHtml(t.account)}</small></td>
+            <td class="font-monospace small text-secondary">${t.date}</td>
+            <td><span class="badge bg-light text-dark border small">${escapeHtml(t.method)}</span></td>
+            <td class="text-end ${amountClass}">${amountDisplay}</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-danger btn-action py-0 px-2" onclick="deleteTransaction(${t.id})" title="Delete Transaction">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Chart.js Rendering
+    function renderCharts() {
+      // 1. Category Donut
+      const categoryTotals = {};
+      transactions.filter(t => t.type === 'expense').forEach(t => {
+        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + Number(t.amount);
+      });
+
+      const categories = Object.keys(categoryTotals);
+      const amounts = Object.values(categoryTotals);
+      const colors = categories.map(c => CATEGORY_COLORS[c] || '#64748b');
+
+      if (donutChartInstance) donutChartInstance.destroy();
+      const donutCtx = document.getElementById('categoryDonutChart').getContext('2d');
+      donutChartInstance = new Chart(donutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: categories,
+          datasets: [{
+            data: amounts,
+            backgroundColor: colors,
+            borderColor: 'transparent',
+            borderWidth: 2,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          cutout: '72%'
+        }
+      });
+
+      // Populate custom legend
+      const legendEl = document.getElementById('categoryLegendList');
+      legendEl.innerHTML = categories.map((cat, i) => `
+        <div class="d-flex justify-content-between align-items-center small py-1">
+          <div class="d-flex align-items-center gap-2">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: ${colors[i]};"></span>
+            <span>${cat}</span>
+          </div>
+          <span class="fw-bold font-monospace">₹${amounts[i].toLocaleString('en-IN')}</span>
+        </div>
+      `).join('');
+
+      // 2. Cashflow Trend (Last 6 Months)
+      const months = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+      const incomeData = [72000, 75000, 75000, 80000, 82000, 85000];
+      const expenseData = [28500, 31200, 29800, 34100, 30500, 32450];
+
+      if (cashflowChartInstance) cashflowChartInstance.destroy();
+      const cashCtx = document.getElementById('cashflowChart').getContext('2d');
+      cashflowChartInstance = new Chart(cashCtx, {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [
+            {
+              label: 'Total Inflow',
+              data: incomeData,
+              backgroundColor: 'rgba(16, 185, 129, 0.75)',
+              borderRadius: 6
+            },
+            {
+              label: 'Total Outflow',
+              data: expenseData,
+              backgroundColor: 'rgba(239, 68, 68, 0.75)',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { boxWidth: 12, font: { family: "'Inter', sans-serif" } }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(125, 125, 125, 0.1)' }
+            },
+            x: {
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // Handlers
+    function handleCreateTransaction(e) {
+      e.preventDefault();
+      const type = document.querySelector('input[name="txnType"]:checked').value;
+      const title = document.getElementById('txnTitle').value.trim();
+      const amount = parseFloat(document.getElementById('txnAmount').value);
+      const category = document.getElementById('txnCategory').value;
+      const account = document.getElementById('txnAccount').value;
+      const method = document.getElementById('txnMethod').value;
+      const date = document.getElementById('txnDate').value;
+
+      if (!title || !amount || isNaN(amount)) return;
+
+      const newTxn = {
+        id: Date.now(),
+        title,
+        amount,
+        type,
+        category,
+        account,
+        method,
+        date
+      };
+
+      transactions.unshift(newTxn);
+      saveTransactions();
+      renderAll();
+
+      // Close modal
+      const modalEl = document.getElementById('addTransactionModal');
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      modal.hide();
+      document.getElementById('newTxnForm').reset();
+      document.getElementById('txnDate').value = new Date().toISOString().split('T')[0];
+
+      showToast(`Logged ₹${amount.toLocaleString('en-IN')} for "${title}"`);
+    }
+
+    function deleteTransaction(id) {
+      const idx = transactions.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        const deleted = transactions.splice(idx, 1)[0];
+        saveTransactions();
+        renderAll();
+        showToast(`Deleted transaction: ${deleted.title}`);
+      }
+    }
+
+    function resetToDemoData() {
+      if (confirm('Reset ledger to default verified sample transactions?')) {
+        transactions = [...DEFAULT_TRANSACTIONS];
+        saveTransactions();
+        renderAll();
+        showToast('Ledger reset to default sample records.');
+      }
+    }
+
+    function filterLedger() {
+      renderLedger();
+    }
+
+    function setTxnTypeFilter(type, btn) {
+      activeTypeFilter = type;
+      btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderLedger();
+    }
+
+    document.getElementById('accountFilter').addEventListener('change', () => {
+      renderAll();
+    });
+
+    function exportToCSV() {
+      const headers = ['ID', 'Title', 'Type', 'Category', 'Account', 'Payment Method', 'Date', 'Amount (INR)'];
+      const rows = transactions.map(t => [
+        t.id,
+        `"${t.title.replace(/"/g, '""')}"`,
+        t.type,
+        `"${t.category}"`,
+        `"${t.account}"`,
+        `"${t.method}"`,
+        t.date,
+        t.amount
+      ]);
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `hp_expense_ledger_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('Exported transaction ledger to CSV.');
+    }
+
+    function showToast(msg) {
+      document.getElementById('toastMessage').textContent = msg;
+      const toastEl = document.getElementById('actionToast');
+      const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+      toast.show();
+    }
+
+    // Theme Engine
+    function initTheme() {
+      const savedTheme = localStorage.getItem('hp_theme') || 'dark';
+      document.documentElement.setAttribute('data-bs-theme', savedTheme);
+      updateThemeIcon(savedTheme);
+
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-bs-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-bs-theme', next);
+        localStorage.setItem('hp_theme', next);
+        updateThemeIcon(next);
+        renderCharts();
+      });
+    }
+
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById('themeIcon');
+      if (theme === 'dark') {
+        icon.className = 'bi bi-moon-stars text-info';
+      } else {
+        icon.className = 'bi bi-sun text-warning';
+      }
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[m]);
+    }
+
+    // Run on mount
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
