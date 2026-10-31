@@ -218,7 +218,7 @@
         </div>
         <div>
           <span class="fs-5 tracking-tight">HP <span style="color: #6366f1;">ExpenseTracker</span></span>
-          <span class="badge bg-primary-subtle text-primary border border-primary-subtle ms-2 fs-xs">Live v2.4</span>
+          <span class="badge bg-success-subtle text-success border border-success-subtle ms-2 fs-xs">● Live Working Platform</span>
         </div>
       </a>
 
@@ -587,8 +587,8 @@
           </div>
 
           <!-- Reset data -->
-          <button class="btn btn-sm btn-outline-danger" onclick="resetToDemoData()" title="Reset to Initial Sample Data">
-            <i class="bi bi-arrow-counterclockwise"></i> Reset Demo
+          <button class="btn btn-sm btn-outline-secondary" onclick="resetToSampleData()" title="Reset to Initial Verified Records">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset Ledger
           </button>
         </div>
       </div>
@@ -1019,12 +1019,12 @@
       }
     }
 
-    function resetToDemoData() {
-      if (confirm('Reset ledger to default verified sample transactions?')) {
+    function resetToSampleData() {
+      if (confirm('Reset ledger to default verified records?')) {
         transactions = [...DEFAULT_TRANSACTIONS];
         saveTransactions();
         renderAll();
-        showToast('Ledger reset to default sample records.');
+        showToast('Ledger reset to default verified records.');
       }
     }
 
